@@ -22,7 +22,11 @@ const userSchema=mongoose.Schema({
     isBlocked:{
         type:Boolean,
         default:false
-    }
+    },
+    cart:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Product"
+    }]
 })
 
 const User=mongoose.model('User',userSchema)

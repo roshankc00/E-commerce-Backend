@@ -1,4 +1,5 @@
 const Product = require("../models/productModel")
+const User = require("../models/userModel")
 
 
 
@@ -127,7 +128,54 @@ const getAllProduct=async(req,res)=>{
             sucess:true,
             products
         })
+    } catch (error) {
+        return  res.status(500).json({
+             sucess:false,
+             error
+         })
+     }
+}
+
+
+// add to the card 
+const addProductToCart=async(req,res)=>{
+    const {id}=req.body
+    try {
+        req.user.cart.map((item)=>{
+            if(item.toString()===id){
+                return res.status(400).json({
+                    sucess:false,
+                    message:"this item is already added to cart"
+                })
+            }
+        })
+        const user=await User.findByIdAndUpdate(req.user.id,{
+            $push:{"cart":req.body.id}
+        },{new:true})
+        res.json(user)
+
         
+    } catch (error) {
+        return  res.status(500).json({
+             sucess:false,
+             error
+         })
+         
+     }
+
+}
+
+// remove from cart
+const removeProductFromCart=async(req,res)=>{
+    try {
+        console.log(req.body.id);
+        const removed=await User.findByIdAndUpdate(req.user.id,{
+            $pull:{"cart":req.body.id}
+        },{new:true})
+        res.status(200).json({
+            sucess:true,
+            removed
+        })
     } catch (error) {
         return  res.status(500).json({
              sucess:false,
@@ -138,12 +186,12 @@ const getAllProduct=async(req,res)=>{
 }
 
 
-
-
 module.exports={
     createproduct,
     getSingleProduct,
     updateProduct,
     deleteProduct,
-    getAllProduct
+    getAllProduct,
+    addProductToCart,
+    removeProductFromCart
 }
