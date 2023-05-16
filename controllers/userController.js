@@ -310,6 +310,21 @@ const updateUser=async(req,res)=>{
 
 
 // forgetPassword
+// const forgetPassword=async(req,res)=>{
+//     const {email}=req.body
+//     try {
+//         const user=await User.findOne({email})
+//         if(!user){
+//             return res.status(400).json({
+//                 sucess:false,
+//                 message:"no user with this email exists"
+//             })
+//         }
+        
+//     } catch (error) {
+        
+//     }
+// }
 
 //============================================ resetpassword====================
 
