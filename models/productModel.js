@@ -19,7 +19,15 @@ const productSchema=mongoose.Schema({
     brand:{
         type:String,
         required:true
-    }
+    },
+    rattings:[{
+        star:Number,
+        Comment:String,
+        postedBy:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"User"
+        }
+    }],    
 },{timestamps:true})
 
 const Product=mongoose.model('Product',productSchema)

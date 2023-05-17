@@ -5,7 +5,7 @@ const User = require("../models/userModel")
 
 
 
-//===================== create the product========================
+//create the product
 const createproduct=async(req,res)=>{
     const {name,description,price,category,brand}=req.body
     try {
@@ -40,7 +40,7 @@ const createproduct=async(req,res)=>{
 }
 
 
-//==================get a single product============================
+//get a single product
 const getSingleProduct=async(req,res)=>{
     try {
         const product=await Product.findById(req.params.id)
@@ -186,6 +186,51 @@ const removeProductFromCart=async(req,res)=>{
 }
 
 
+
+// ratings 
+const addRating=async(req,res)=>{
+    const postedBy=req.user.id
+    const {star,productId,comment}=req.body
+    let alreadyrated=false
+    try {
+        const product=await Product.findById(productId)
+        product.rattings.map((pro)=>{
+            if(pro._id.toString()===id.toString()){
+                alreadyrated
+            }
+        })
+        if(alreadyrated){
+            return res.send(alreadyrated)
+        }
+   const rateproduct=await Product.findByIdAndUpdate(productId,{
+    $push:{
+        rattings:{
+            star:star,
+            comment:comment,
+            postedBy
+        }
+    }
+   },{new:true})
+   
+   res.status(200).json({
+    rateproduct
+   })
+        
+        
+    } catch (error) {
+        return  res.status(500).json({
+             sucess:false,
+             error
+         })
+         
+     }
+}
+
+
+
+
+
+
 module.exports={
     createproduct,
     getSingleProduct,
@@ -193,5 +238,6 @@ module.exports={
     deleteProduct,
     getAllProduct,
     addProductToCart,
-    removeProductFromCart
+    removeProductFromCart,
+    addRating
 }

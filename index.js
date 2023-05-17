@@ -4,6 +4,7 @@ const dotenv=require('dotenv').config({path:"./config/.env"})
 const cors=require('cors')
 const morgan=require('morgan')
 const cookieParser = require('cookie-parser')
+const Errorhandler = require('./middlewares/errorHandler')
 // rest variables
 const app=express()
 const PORT=process.env.PORT
@@ -28,11 +29,20 @@ app.use(cookieParser())
 
 
 
-
 // all the routes
 app.use('/api/v1/user',userRoute)
 app.use('/api/v1',productRoute)
+app.get('/',(req,res,next)=>{
 
+
+        
+   
+       next({status:400,message:"no error okie"})
+        
+   
+
+})
+app.use(Errorhandler)
 
 app.listen(PORT,()=>{
     console.log(`Listening at the port ${PORT}`);
