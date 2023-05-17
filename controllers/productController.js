@@ -1,8 +1,6 @@
-const Errorhandler = require("../middlewares/errorHandler")
 const Product = require("../models/productModel")
 const User = require("../models/userModel")
 
-Errorhandler
 
 
 
@@ -101,10 +99,55 @@ const deleteProduct=async(req,res,next)=>{
 // get all the products ==> filter pagination 
 const getAllProduct=async(req,res,next)=>{
     try {
-        const products=await Product.find({})
+        // filtering
+   const queryObj={...req.query}
+   const excludeFields=['page','sort','limit',"fields"]
+   excludeFields.forEach((el)=>delete queryObj[el]);
+
+    let queryStr=JSON.stringify(queryObj)
+    queryStr=queryStr.replace(/\b(gte|gt|lte|lt)\b/g,match=>`$${match}`)
+    let query=Product.find(JSON.parse(queryStr))
+    // shorting
+    if(req.query.sort){
+        console.log(req.query);
+        const sortBy=req.query.sort.split(',').join(' ')
+        query= Product.find(JSON.parse(queryStr)).sort(sortBy)
+      }else{
+        query=query.sort("-createdAt")
+        
+      }
+    //   limiting the fields
+    if(req.query.fields){
+        const fields=req.query.fields.split(',').join(' ')
+        query= Product.find(JSON.parse(queryStr)).select(fields)
+    }else{
+        query=query.select("-__v")
+
+    }
+
+    // pagination 
+    console.log(req.query);
+    const page=Number(req.query.page )
+    const limit=Number(req.query.limit)
+    const skip=(page-1)*limit
+    if(req.query.page){
+        const productCount=await Product.countDocuments()
+        if(skip>=productCount){
+            next({status:400,message:"this page doesot exist"})
+        }
+    }
+
+    query=query.skip(skip).limit(limit)
+ 
+
+
+
+        let product=await query
+
         res.status(200).json({
             sucess:true,
-            products
+            productlength:product.length,
+            product 
         })
     } catch (error) {
         next({message:error.message})
@@ -162,14 +205,14 @@ const removeProductFromCart=async(req,res,next)=>{
 
 
 // ratings 
-const addRating=async(req,res)=>{
+const addRating=async(req,res,next)=>{
     const postedBy=req.user.id
     const {star,productId,comment}=req.body
     let alreadyrated=false
     try {
         const product=await Product.findById(productId)
         product.rattings.map((pro)=>{
-            if(pro._id.toString()===id.toString()){
+            if(pro._id.toString()===postedBy.toString()){
                 alreadyrated
             }
         })
@@ -178,26 +221,20 @@ const addRating=async(req,res)=>{
         }
    const rateproduct=await Product.findByIdAndUpdate(productId,{
     $push:{
-        rattings:{
+        "rattings":{
             star:star,
             comment:comment,
-            postedBy
         }
     }
    },{new:true})
-   
    res.status(200).json({
     rateproduct
    })
         
         
-    } catch (error) {
-        return  res.status(500).json({
-             sucess:false,
-             error
-         })
-         
-     }
+} catch (error) {
+    next({message:error.message})
+}
 }
 
 

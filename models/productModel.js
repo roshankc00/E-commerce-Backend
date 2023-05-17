@@ -23,10 +23,7 @@ const productSchema=mongoose.Schema({
     rattings:[{
         star:Number,
         Comment:String,
-        postedBy:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"User"
-        }
+        
     }],    
 },{timestamps:true})
 
