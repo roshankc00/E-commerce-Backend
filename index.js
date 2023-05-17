@@ -32,16 +32,6 @@ app.use(cookieParser())
 // all the routes
 app.use('/api/v1/user',userRoute)
 app.use('/api/v1',productRoute)
-app.get('/',(req,res,next)=>{
-
-
-        
-   
-       next({status:400,message:"no error okie"})
-        
-   
-
-})
 app.use(Errorhandler)
 
 app.listen(PORT,()=>{

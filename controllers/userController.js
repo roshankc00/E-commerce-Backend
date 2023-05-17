@@ -4,14 +4,11 @@ const jwt=require('jsonwebtoken')
 
 
 // ============Register the User===========
-const registerUser=async(req,res)=>{
+const registerUser=async(req,res,next)=>{
     const {name,email,password}=req.body
     try {
         if(!name || !email || !password){
-            res.status(400).json({
-                sucess:false,
-                message:"all the fields are necessary"
-            })
+            next({status:400,message:"all the fields are necessary"})
         }
         // hashing the password
         const secpass=await bcrypt.hash(password,10)
@@ -27,10 +24,7 @@ const registerUser=async(req,res)=>{
         })
         
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
+       next({message:error.message})
         
     }
 }
@@ -46,22 +40,16 @@ const registerUser=async(req,res)=>{
 
 
 //========== Login the User================
-const loginUser=async(req,res)=>{
+const loginUser=async(req,res,next)=>{
     const {email,password}=req.body
     try {
         const user=await User.findOne({email})
         if(!user){
-            return res.status(400).json({
-                sucess:false,
-                message:"login  with proper credentials"
-            })
+            next({status:400,message:"login  with proper credentials"})
         }
         const isPasswordCorrect=await bcrypt.compare(password,user.password)
         if(!isPasswordCorrect){
-            return res.status(400).json({
-                sucess:false,
-                message:"login with proper credentials"
-            })
+            next({status:400,message:"login  with proper credentials"})
         }
       const token=  jwt.sign({id:user._id},process.env.SECRET)
         res.cookie('token',token,{
@@ -72,12 +60,9 @@ const loginUser=async(req,res)=>{
             message:"user login sucessfully"
         })
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
-        
-    }
+        next({message:error.message})
+         
+     }
 
 }
 
@@ -87,27 +72,19 @@ const loginUser=async(req,res)=>{
 
 
 // ==========get the user=========
-const getSingleuser=async(req,res)=>{
+const getSingleuser=async(req,res,next)=>{
     try {
         const user=await User.findById(req.params.id)
         if(!user){
-           return  res.status(404).json({
-                sucess:false,
-                message:'no user exists with this id'
-            })
-
+            next({status:404,message:'no user exists with this id'})
         }
         res.status(200).json({
             sucess:true,
             user
         })
-
-        
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
+        next({message:error.message})
+         
         
     }
 
@@ -117,7 +94,7 @@ const getSingleuser=async(req,res)=>{
 
 
 // ===============getalltheusers=========adminonly
-const getAllUser=async(req,res)=>{
+const getAllUser=async(req,res,next)=>{
     try {
         const users=await User.find({})
         res.status(200).json({
@@ -126,12 +103,9 @@ const getAllUser=async(req,res)=>{
         })
         
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
-        
-    }
+        next({message:error.message})
+         
+     }
 }
 
 
@@ -141,15 +115,11 @@ const getAllUser=async(req,res)=>{
 
 
 // ============delete the user============
-const deleteUser=async(req,res)=>{
+const deleteUser=async(req,res,next)=>{
     try {
         const user=await User.findByIdAndDelete(req.params.id)
         if(!user){
-           return  res.status(404).json({
-                sucess:true,
-                message:"no user exist with this id"
-
-            })
+            next({status:400,message:"no user exist with this id"})
         }
         res.status(200).json({
             sucess:true,
@@ -157,34 +127,28 @@ const deleteUser=async(req,res)=>{
         })
         
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
-        
-    }
+        next({message:error.message})
+         
+     }
 }
 
 
 
 // ================logOut user========
-const logoutUser=async(req,res)=>{
+const logoutUser=async(req,res,next)=>{
     try {
         res.cookie('token',null,{
             expires:new Date(Date.now())
         })
         res.status(200).json({
             sucess:true,
-            message:"Logedout"
+            message:"Loged out"
         })       
         
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
-        
-    }
+        next({message:error.message})
+         
+     }
 }
 
 
@@ -192,7 +156,7 @@ const logoutUser=async(req,res)=>{
 
 
 // change the userStatus
-const changeStatus=async(req,res)=>{
+const changeStatus=async(req,res,next)=>{
     const {id,status}=req.body
 
 
@@ -206,12 +170,9 @@ const changeStatus=async(req,res)=>{
         })
         
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
-        
-    }
+        next({message:error.message})
+         
+     }
 }
 
 
@@ -220,7 +181,7 @@ const changeStatus=async(req,res)=>{
 
 
 // Block the user 
-const blockUser=async(req,res)=>{
+const blockUser=async(req,res,next)=>{
     const id=req.body.id
     console.log(id);
     try {
@@ -233,14 +194,11 @@ const blockUser=async(req,res)=>{
             blockedUser
         })
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
-        
-    }
+        next({message:error.message})
+         
+     }
 }
-const unblockUser=async(req,res)=>{
+const unblockUser=async(req,res,next)=>{
     const id=req.body.id
     try {
         const  unblockedUser=await User.findByIdAndUpdate(id,{
@@ -252,38 +210,26 @@ const unblockUser=async(req,res)=>{
             unblockedUser
         })
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
-        
-    }
+        next({message:error.message})
+         
+     }
 }
 
 
 
 // update the user 
-const updateUser=async(req,res)=>{
+const updateUser=async(req,res,next)=>{
     const {email,oldPassword,newPassword,conformPassword}=req.body
     try {
         if(email!==req.user.email){
-            return res.status(400).json({
-                sucess:false,
-                message:"this is not your email"
-            })
+            next({status:400,message:"this is not your email"})
         }
         if(newPassword!==conformPassword){
-            return res.status(400).json({
-                sucess:false,
-                message:"Password and confirm password  doesnt match"
-            })
+            next({status:400,message:"password and conform password doesnt match"})
         }
         const isPasswordCorrect=await bcrypt.compare(oldPassword,req.user.password)
         if(!isPasswordCorrect){
-            return res.status(400).json({
-                sucess:false,
-                message:"Password is not correct"
-            })
+            next({status:400,message:"incorrect password"})
 
         }
         const secpass=await bcrypt.hash(newPassword,10)
@@ -297,12 +243,9 @@ const updateUser=async(req,res)=>{
             updatedUser
         })
     } catch (error) {
-        res.status(500).json({
-            sucess:false,
-            error
-        })
-        
-    }
+        next({message:error.message})
+         
+     }
 }
 
 
