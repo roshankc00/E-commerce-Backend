@@ -138,10 +138,6 @@ const getAllProduct=async(req,res,next)=>{
     }
 
     query=query.skip(skip).limit(limit)
- 
-
-
-
         let product=await query
 
         res.status(200).json({
@@ -153,7 +149,6 @@ const getAllProduct=async(req,res,next)=>{
         next({message:error.message})
     }
 }
-
 
 // add to the card 
 const addProductToCart=async(req,res,next)=>{
@@ -204,38 +199,7 @@ const removeProductFromCart=async(req,res,next)=>{
 
 
 
-// ratings 
-const addRating=async(req,res,next)=>{
-    const postedBy=req.user.id
-    const {star,productId,comment}=req.body
-    let alreadyrated=false
-    try {
-        const product=await Product.findById(productId)
-        product.rattings.map((pro)=>{
-            if(pro._id.toString()===postedBy.toString()){
-                alreadyrated
-            }
-        })
-        if(alreadyrated){
-            return res.send(alreadyrated)
-        }
-   const rateproduct=await Product.findByIdAndUpdate(productId,{
-    $push:{
-        "rattings":{
-            star:star,
-            comment:comment,
-        }
-    }
-   },{new:true})
-   res.status(200).json({
-    rateproduct
-   })
-        
-        
-} catch (error) {
-    next({message:error.message})
-}
-}
+
 
 
 
@@ -250,5 +214,4 @@ module.exports={
     getAllProduct,
     addProductToCart,
     removeProductFromCart,
-    addRating
 }

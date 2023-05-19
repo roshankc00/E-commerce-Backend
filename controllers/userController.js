@@ -281,5 +281,4 @@ module.exports={
     unblockUser,
     blockUser,
     updateUser,
-    
 }
