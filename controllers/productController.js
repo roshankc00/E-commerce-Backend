@@ -1,29 +1,46 @@
 const Product = require("../models/productModel")
 const User = require("../models/userModel")
-
+const cloudinary=require('cloudinary')
 
 
 
 //create the product
 const createproduct=async(req,res,next)=>{
     const {name,description,price,category,brand}=req.body
+    console.log(name,description)
+    console.log(req.file)
 
     try {
         if(!name || !description ||!price ||!category  ||!brand){
            next({status:400,message:"All the fields are necessary"})
         }
+        const cloud = cloudinary.uploader.upload(req.file.path)
+        cloud.then(async(data) => {
+        //   inserting user to the database
         const product=await Product.create({
             name,
             description,
             price,
             category,
-            brand
+            brand,
+            thumbnail:{
+                imgloc:req.file.path,
+                imgurl:data.secure_url
+            },
         })
         
         res.status(200).json({
             sucess:true,
             product
         })
+      
+       
+        }).catch((err) => {
+           next({message:err.message})
+      
+        });
+        
+        
         
     } catch (error) {
         next({message:error.message})
