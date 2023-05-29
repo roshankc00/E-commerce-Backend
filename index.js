@@ -6,6 +6,22 @@ const morgan=require('morgan')
 const cookieParser = require('cookie-parser')
 const Errorhandler = require('./middlewares/errorHandler')
 const cloudinary=require('cloudinary')
+
+//  uncaughtException
+process.on("uncaughtException",(error)=>{
+    console.log(` Error:${error.message}`)
+    console.log("shuttting down the server due to uncaughtException ")
+    process.exit(1)
+   
+})
+
+
+
+
+
+
+
+
 // rest variables
 const app=express()
 const PORT=process.env.PORT
@@ -41,14 +57,27 @@ app.use(express.static('public/upload'))
 
 
 
-
 // all the routes
 app.use('/api/v1/user',userRoute)
 app.use('/api/v1',productRoute)
 app.use('/api/v1',orderRoute)
 app.use(Errorhandler)
 
-app.listen(PORT,()=>{
+const server =app.listen(PORT,()=>{
     console.log(`Listening at the port ${PORT}`);
 })
+
+
+
+
+// handeling the unhandled promise rejection
+process.on("unhandledRejection",(error)=>{
+    console.log(` Error:${error.message}`)
+    console.log("shuttting down the server due to  unhandled promise rejection")
+    server.close(()=>{
+        process.exit(1);
+    })
+})
+
+
 
