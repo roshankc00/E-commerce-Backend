@@ -12,8 +12,8 @@ router.get('/admin',checkAuth,isAdmin,getAllUser)
 router.post('/admin/changestatus',checkAuth,changeStatus)
 router.post('/admin/blockuser',checkAuth,isAdmin,blockUser)
 router.post('/admin/unblockuser',checkAuth,isAdmin,unblockUser)
-router.put('/user/forgetpassword',forgetPassword)
-router.put('/user/password/reset/:token',resetPassword)
+router.put('/forgetpassword',forgetPassword)
+router.put('/password/reset/:token',resetPassword)
 
 
-module.exports=router
+module.exports=router 
