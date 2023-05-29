@@ -23,8 +23,19 @@ const orderSchema=mongoose.Schema({
     houseNo:{
         type:Number,
         required:true
-    }
+    },
+    products:[{
+        product:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Products"
+        }
+
+    }]
 },{timestamps:true})
 
 const Order=mongoose.model('Order',orderSchema)
 module.exports=Order 
+
+
+// total amount garna 
+
