@@ -15,9 +15,10 @@ connectDb()
 
 
 
-// all the routesimport 
+// all the routes import 
 const userRoute=require('./routes/userRoute')
 const productRoute=require('./routes/productRoute')
+const orderRoute=require('./routes/orderRoute')
 
 
 // middlewares
@@ -32,6 +33,7 @@ app.use(cookieParser())
 // all the routes
 app.use('/api/v1/user',userRoute)
 app.use('/api/v1',productRoute)
+app.use('/api/v1',orderRoute)
 app.use(Errorhandler)
 
 app.listen(PORT,()=>{

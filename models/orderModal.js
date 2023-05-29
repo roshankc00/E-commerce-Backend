@@ -2,9 +2,10 @@ const mongoose=require('mongoose')
 
 const orderSchema=mongoose.Schema({
     user:{
-        type:mongoose.Schema.Types.ObjectId
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
     },
-    fullname:{
+    fullName:{
         type:String,
         required:true,
     },
@@ -25,12 +26,10 @@ const orderSchema=mongoose.Schema({
         required:true
     },
     products:[{
-        product:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:"Products"
-        }
-
-    }]
+            ref:"Product" 
+    }],
+    totalAmount:Number,
 },{timestamps:true})
 
 const Order=mongoose.model('Order',orderSchema)

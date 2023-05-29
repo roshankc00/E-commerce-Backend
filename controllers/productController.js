@@ -75,6 +75,7 @@ const updateProduct=async(req,res,next)=>{
     }
 
 }
+// dev 
 
 
 // delete the Product
@@ -198,13 +199,25 @@ const removeProductFromCart=async(req,res,next)=>{
 }
 
 
+// rate the product
+const rateProduct=async(req,res,next)=>{
+    const {comment,star}=req.body
+    try {
+        const product=await Product.findById(req.params.id)
+        product.rate.push({
+            comment:comment,
+            star,
+            owner:req.user._id
+        })
+        await product.save()
+        res.send(product)
+        console.log("wow")
 
-
-
-
-
-
-
+    } catch (error) {
+        next({message:error.message})
+        
+    }
+}
 
 module.exports={
     createproduct,
@@ -214,4 +227,5 @@ module.exports={
     getAllProduct,
     addProductToCart,
     removeProductFromCart,
+    rateProduct
 }
