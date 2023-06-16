@@ -1,5 +1,5 @@
 const express=require('express')
-const { registerUser, loginUser,getSingleuser,getAllUser,logoutUser,changeStatus,blockUser,unblockUser, updateUser, forgetPassword, resetPassword} = require('../controllers/userController')
+const { registerUser, loginUser,getSingleuser,getAllUser,logoutUser,changeStatus,blockUser,unblockUser, updateUser} = require('../controllers/userController')
 const { checkAuth,isAdmin } = require('../middlewares/auth')
 const router=express.Router()
 
@@ -12,7 +12,8 @@ router.get('/admin',checkAuth,isAdmin,getAllUser)
 router.post('/admin/changestatus',checkAuth,changeStatus)
 router.post('/admin/blockuser',checkAuth,isAdmin,blockUser)
 router.post('/admin/unblockuser',checkAuth,isAdmin,unblockUser)
-router.post('/forgetpassword',forgetPassword)
-router.post('/password/reset/:token',resetPassword)
+// router.put('/forgetpassword',forgetPassword)
+// router.put('/password/reset/:token',resetPassword)
+
 
 module.exports=router 

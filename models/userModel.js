@@ -31,5 +31,33 @@ const userSchema=mongoose.Schema({
     resetPasswordExpire: Date,
 })
 
+userSchema.methods.matchPassword = async function (password) {
+    const wow = await bcrypt.compare(password, this.password);
+    return wow;
+  };
+  userSchema.methods.getResetPasswordToken = async function () {
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    console.log(resetToken,"forget")
+    this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+    console.log(this.resetPasswordToken)
+    console.log(resetToken,"kmdkcmdkm")
+    return resetToken;
+  };
+
+
+
+
+
+
+
+
+
+
+
+
 const User=mongoose.model('User',userSchema)
 module.exports=User

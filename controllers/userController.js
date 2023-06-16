@@ -1,7 +1,6 @@
 const User = require("../models/userModel")
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
-const { sendEmail } = require("../middlewares/sendEmail")
 
 
 // ============Register the User===========
@@ -252,75 +251,26 @@ const updateUser=async(req,res,next)=>{
 
 
 
-const forgetPassword=async(req,res,next)=>{
-    try {
-        const user=await User.findOne({email:req.body.email})
-        if(!user){
-            next({status:404,message:"user doesnt exists"})
-        }
-        const resetPasswordToken=await user.getResetPasswordToken();
-        await user.save()
-        console.log(user)
-        const resetUrl=`${req.protocol}://${req.get("host")}/api/v1/user/password/reset/${resetPasswordToken}`
-        const message=`Reset Your password on clicking:\n ${resetUrl} `
-        try {
-            await sendEmail({
-                email:user.email,
-                subject:"reset the password",
-                message
-            })
-            res.status(200).json({
-                sucess:true,
-                message:` email sent to ${user.email}`
-            
-            })
-        } catch (error) {
-            user.resetPasswordToken=undefined,
-            user.reserPasswordExpire=undefined,
-            user.save()
-            next({message:"unable to send the email"})
-            
-        }
+// forgetPassword
+// const forgetPassword=async(req,res)=>{
+//     const {email}=req.body
+//     try {
+//         const user=await User.findOne({email})
+//         if(!user){
+//             return res.status(400).json({
+//                 sucess:false,
+//                 message:"no user with this email exists"
+//             })
+//         }
         
-    } catch (error) {
-        next({message:error.message})
+    // } catch (error) {
+    //     next({message:error.message})
         
-    }
-  }
+//     }
+// }
 
+//============================================ resetpassword====================
 
-  const resetPassword=async(req,res,next)=>{
-    try {
-
-        const resetPasswordToken=await crypto
-        .createHash("sha256")
-        .update(req.params.token)
-        .digest("hex");
-        console.log(resetPasswordToken,"re")
-        console.log(req.params.token,"token")
-        const user=await User.findOne({
-            resetPasswordToken,
-            resetPasswordExpire:{$gt:Date.now()},
-        })
-        if(!user){
-            next({status:401,message:"token is invalid or expires"})
-        }
-
-        user.password=req.body.password
-        user.reserPasswordExpire=undefined
-        user.reserPasswordToken=undefined
-        await user.save();
-        res.status(200).json({
-            sucess:true,
-            message:"password updated sucessfully"
-        })
-   
-    } catch (error) {
-        next({message:error.message})
-        
-    }
-
-  }
 
 module.exports={
     registerUser,
@@ -332,6 +282,6 @@ module.exports={
     unblockUser,
     blockUser,
     updateUser,
-    forgetPassword,
-    resetPassword
+    // forgetPassword,
+    // resetPassword
 }

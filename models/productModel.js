@@ -20,6 +20,10 @@ const productSchema=mongoose.Schema({
         type:String,
         required:true
     },
+    thumbnail:{
+        imgloc:String,
+           imgurl:String
+        },
     brand:{
         type:String,
         required:true

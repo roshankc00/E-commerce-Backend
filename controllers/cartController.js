@@ -91,12 +91,6 @@ const deleteProductFromCart=async(req,res,next)=>{
                 cart
             })
         }
-     
-     
-      
-
-        
-
     } catch(error) {
         next({message:error.message})
         

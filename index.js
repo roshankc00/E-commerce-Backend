@@ -17,6 +17,16 @@ cloudinary.v2.config({
     api_secret:process.env.CLOUDINARY_CLIENT_SECRET
 })
 
+
+// configuring the cloudinary 
+cloudinary.v2.config({
+    cloud_name:process.env.CLOUDINARY_CLIENT_NAME,
+    api_key:process.env.CLOUDINARY_CLIENT_API,
+    api_secret:process.env.CLOUDINARY_CLIENT_SECRET
+})
+
+
+
 // connecting to the Database
 connectDb()
 
@@ -34,7 +44,7 @@ app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())
-
+app.use(express.static('public/upload'))
 
 
 
@@ -45,7 +55,21 @@ app.use('/api/v1',orderRoute)
 app.use('/api/v1',cartRoute)
 app.use(Errorhandler)
 
-app.listen(PORT,()=>{
+const server =app.listen(PORT,()=>{
     console.log(`Listening at the port ${PORT}`);
 })
+
+
+
+
+// handeling the unhandled promise rejection
+process.on("unhandledRejection",(error)=>{
+    console.log(` Error:${error.message}`)
+    console.log("shuttting down the server due to  unhandled promise rejection")
+    server.close(()=>{
+        process.exit(1);
+    })
+})
+
+
 
