@@ -25,11 +25,20 @@ const orderSchema=mongoose.Schema({
         type:Number,
         required:true
     },
-    cart:[{
+    cart:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Cart'
-    }],  
+    },  
     totalAmount:Number,
+    status:{
+        type:String,
+        default:"unpaid",
+        enum:["unpaid","paid"]
+    },
+    recieved:{
+        type:Boolean,
+        default:false
+    }
 },{timestamps:true})
 
 const Order=mongoose.model('Order',orderSchema)

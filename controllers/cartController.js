@@ -98,9 +98,6 @@ const deleteProductFromCart=async(req,res,next)=>{
 
 }
 
-
-
-
 module.exports={
     addProductToCart,
     deleteProductFromCart
