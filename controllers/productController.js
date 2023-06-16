@@ -219,6 +219,7 @@ const rateProduct=async(req,res,next)=>{
     }
 }
 
+
 module.exports={
     createproduct,
     getSingleProduct,

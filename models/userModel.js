@@ -1,5 +1,5 @@
 const mongoose=require('mongoose')
-
+const crypto=require('crypto')
 
 const userSchema=mongoose.Schema({
     name:{
@@ -26,7 +26,9 @@ const userSchema=mongoose.Schema({
     cart:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Product"
-    }]
+    }],
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
 })
 
 const User=mongoose.model('User',userSchema)

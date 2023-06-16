@@ -12,6 +12,10 @@ const productSchema=mongoose.Schema({
         type:Number,
         required:true
     },
+    thumbnail:{
+        url:String,
+        public:String
+    },
     category:{
         type:String,
         required:true

@@ -25,10 +25,10 @@ const orderSchema=mongoose.Schema({
         type:Number,
         required:true
     },
-    products:[{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"Product" 
-    }],
+    cart:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Cart'
+    }],  
     totalAmount:Number,
 },{timestamps:true})
 
