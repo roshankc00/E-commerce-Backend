@@ -3,6 +3,10 @@ const Order = require("../models/orderModal")
 
 const createOrder=async(req,res,next)=>{
     try {
+        let order=await Order.findOne({user:req.user._id})
+        if(order){
+            next({status:400,message:"there is already your order pending"})
+        }
         const {fullName,mobile,city,area,houseNo}=req.body
         if(!fullName || !mobile || !city || !area || !houseNo){
             next({status:404,message:"all the field is required"})
@@ -48,7 +52,10 @@ const deleteOrder=async(req,res,next)=>{
         const orderId=req.params.id
         const order=await Order.findById(req.params.id)
         if(!order){
-            next({status:404,message:"no order found"})
+            next({status:404,message:"no order found or already delivered"})
+        }
+        if(order.user.toString!==req.user.id.toString()){
+            next({status:404,message:"this is not your order"})
         }
         const delOrder=await Order.findByIdAndDelete(orderId)
         res.status(200).json({
@@ -66,6 +73,13 @@ const deleteOrder=async(req,res,next)=>{
 const getASingleOrder=async(req,res,next)=>{
     try {
         const order=await Order.findById(req.params.id)
+        if(!order){
+            next({status:404,message:"there is no such order"})
+        }
+        if(order.user.toString!==req.user.id.toString()){
+            next({status:404,message:"this is not your order"})
+        }
+     
         res.status(200).json({
             sucess:true,
             order
@@ -90,9 +104,28 @@ const getAllOrder=async(req,res,next)=>{
     }
 }
 
+
+
+
+const orderRecieved=async(req,res,next)=>{
+    const order=await Order.findById(req.params.id)
+    if(!order){
+        next({status:404,message:"there is no such order"})
+    }
+    else{
+        const orderdel=await Order.findOneAndDelete({user:req.user._id})
+        res.status(200).json({
+            sucess:true,
+            message:"order done and order is deleted from the list "
+        })
+    }
+}
+
+
 module.exports={
     createOrder,
     deleteOrder,
     getASingleOrder,
-    getAllOrder
+    getAllOrder,
+    orderRecieved,
 }

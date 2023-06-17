@@ -38,7 +38,12 @@ const orderSchema=mongoose.Schema({
     recieved:{
         type:Boolean,
         default:false
+    },
+    orderInfo:{
+        type:Boolean,
+        default:false
     }
+
 },{timestamps:true})
 
 const Order=mongoose.model('Order',orderSchema)
